@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mistral Chatbot</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; }
+    #chatbox { width: 60%; margin: auto; padding: 20px; border: 1px solid #ccc; background: white; height: 500px; overflow-y: auto; }
+    .user { color: blue; margin: 10px 0; }
+    .bot { color: green; margin: 10px 0; }
+    #inputArea { width: 60%; margin: auto; display: flex; }
+    #message { flex: 1; padding: 10px; }
+    button { padding: 10px; }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">Mistral 7B Chatbot</h2>
+  <div id="chatbox"></div>
+  <div id="inputArea">
+    <input type="text" id="message" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const message = document.getElementById("message").value;
+      if (!message) return;
+
+      const chatbox = document.getElementById("chatbox");
+      chatbox.innerHTML += `<div class='user'><b>You:</b> ${message}</div>`;
+
+      document.getElementById("message").value = "";
+
+      const response = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await response.json();
+      chatbox.innerHTML += `<div class='bot'><b>Bot:</b> ${data.reply}</div>`;
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+  </script>
+</body>
+</html>
